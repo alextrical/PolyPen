@@ -1,4 +1,4 @@
-#include "src/generated/PolyPen_menu.h"
+#include "generated/PolyPen_menu.h"
 
 void setup() {
     Wire.begin();

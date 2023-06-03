@@ -15,7 +15,7 @@
 // Global variable declarations
 const  ConnectorLocalInfo applicationInfo = { "PolyPen", "510b4fcf-cf16-4ba2-b736-cc56b6e828ea" };
 ArduinoEEPROMAbstraction glArduinoEeprom(&EEPROM);
-U8G2_SSD1306_128X64_NONAME_F_HW_I2C gfx(U8G2_R0, U8X8_PIN_NONE, U8X8_PIN_NONE, U8X8_PIN_NONE);
+U8G2_SSD1306_128X64_NONAME_F_HW_I2C gfx(U8G2_R0, PD3, U8X8_PIN_NONE, U8X8_PIN_NONE);
 U8g2Drawable gfxDrawable(&gfx, &Wire);
 GraphicsDeviceRenderer renderer(30, applicationInfo.name, &gfxDrawable);
 

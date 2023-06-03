@@ -57,7 +57,7 @@
       },
       {
         "name": "DISPLAY_RESET_PIN",
-        "latestValue": "U8X8_PIN_NONE",
+        "latestValue": "PD3",
         "subsystem": "DISPLAY"
       },
       {
