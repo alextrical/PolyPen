@@ -1,3 +1,6 @@
 name: 'PolyPen'
 description: 'FW'
 author: 'Alextrical'
+runs:
+  using: 'node16'
+  main: 'dist/index.js'
