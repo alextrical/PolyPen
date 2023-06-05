@@ -155,3 +155,4 @@ __pycache__
 tags
 *.logs
 *.bak
+*.kate-swp
