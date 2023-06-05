@@ -21,6 +21,12 @@ jobs:
     - name: Build PlatformIO Project
       run: platformio run --environment btt_ebb42_v1_1
 
+    - uses: actions/upload-artifact@v3
+      with:
+        name: EBB42-${{ github.ref_name }}-FW.bin
+        path: .pio/build/btt_ebb42_v1_1/firmware.bin
+        if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
+
   # The release job only runs when you push a tag starting with "v", e.g. v1.0.0
   release:
     name: Release
