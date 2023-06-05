@@ -1,4 +1,5 @@
 name: Release new action version
+
 on:
   release:
     types: [released]
@@ -10,19 +11,25 @@ on:
 
 env:
   TAG_NAME: ${{ github.event.inputs.TAG_NAME || github.event.release.tag_name }}
-permissions:
-  contents: write
+defaults:
+  run:
+    shell: pwsh
 
 jobs:
   update_tag:
     name: Update the major tag to include the ${{ github.event.inputs.TAG_NAME || github.event.release.tag_name }} changes
+    # Remember to configure the releaseNewActionVersion environment with required approvers in the repository settings
     environment:
       name: releaseNewActionVersion
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
-    - name: Update the ${{ env.TAG_NAME }} tag
-      id: update-major-tag
-      uses: actions/publish-action@v0.2.1
-      with:
-        source-tag: ${{ env.TAG_NAME }}
-        slack-webhook: ${{ secrets.SLACK_WEBHOOK }}
+      - uses: actions/checkout@v3
+
+      - name: Update the ${{ env.TAG_NAME }} tag
+        id: update-major-tag
+        uses: ./
+        with:
+          source-tag: ${{ env.TAG_NAME }}
+          slack-webhook: ${{ secrets.SLACK_WEBHOOK }}
