@@ -9,6 +9,8 @@ void setup() {
     
     Wire.begin();
     setupMenu();
+    switches.init(internalDigitalIo(), SWITCHES_NO_POLLING, true);
+    menuMgr.initForEncoder(&renderer, &menuRun, PB5, PB7, PB6);
 
 }
 
