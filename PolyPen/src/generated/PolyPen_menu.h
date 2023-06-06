@@ -29,15 +29,31 @@ extern GraphicsDeviceRenderer renderer;
 
 
 // Global Menu Item exports
-extern ActionMenuItem menuStart;
+extern BackMenuItem menuBackAdvanced;
+extern SubMenuItem menuAdvanced;
+extern BooleanMenuItem menuDedge;
+extern AnalogMenuItem menuHstrt;
+extern AnalogMenuItem menuHend;
+extern AnalogMenuItem menuToff;
+extern BooleanMenuItem menuReverse;
+extern BooleanMenuItem menuInterpolate;
+extern AnalogMenuItem menuHoldMultiplier;
+extern EnumMenuItem menuMicrostep;
+extern AnalogMenuItem menuCurrent;
+extern BooleanMenuItem menuStealth;
+extern BackMenuItem menuBackMotor;
+extern SubMenuItem menuMotor;
+extern BackMenuItem menuBackSettings;
+extern SubMenuItem menuSettings;
+extern BooleanMenuItem menuRun;
 
 // Provide a wrapper to get hold of the root menu item and export setupMenu
-inline MenuItem& rootMenuItem() { return menuStart; }
+inline MenuItem& rootMenuItem() { return menuRun; }
 void setupMenu();
 
 // Callback functions must always include CALLBACK_FUNCTION after the return type
 #define CALLBACK_FUNCTION
 
-void CALLBACK_FUNCTION onStart(int id);
+void CALLBACK_FUNCTION onRun(int id);
 
 #endif // MENU_GENERATED_CODE_H

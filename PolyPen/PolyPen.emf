@@ -5,13 +5,250 @@
   "items": [
     {
       "parentId": 0,
-      "type": "actionMenu",
+      "type": "boolItem",
+      "defaultValue": "false",
       "item": {
+        "naming": "ON_OFF",
         "name": "%menu.1.name",
-        "variableName": "Start",
+        "variableName": "Run",
         "id": 1,
         "eepromAddress": -1,
-        "functionName": "onStart",
+        "functionName": "onRun",
+        "readOnly": false,
+        "localOnly": false,
+        "visible": true,
+        "staticDataInRAM": false
+      }
+    },
+    {
+      "parentId": 0,
+      "type": "subMenu",
+      "item": {
+        "secured": false,
+        "name": "%menu.2.name",
+        "variableName": "Settings",
+        "id": 2,
+        "eepromAddress": -1,
+        "readOnly": false,
+        "localOnly": false,
+        "visible": true,
+        "staticDataInRAM": false
+      }
+    },
+    {
+      "parentId": 2,
+      "type": "subMenu",
+      "item": {
+        "secured": false,
+        "name": "%menu.3.name",
+        "variableName": "Motor",
+        "id": 3,
+        "eepromAddress": -1,
+        "readOnly": false,
+        "localOnly": false,
+        "visible": true,
+        "staticDataInRAM": false
+      }
+    },
+    {
+      "parentId": 3,
+      "type": "boolItem",
+      "defaultValue": "true",
+      "item": {
+        "naming": "TRUE_FALSE",
+        "name": "%menu.4.name",
+        "variableName": "Stealth",
+        "id": 4,
+        "eepromAddress": -1,
+        "readOnly": false,
+        "localOnly": false,
+        "visible": true,
+        "staticDataInRAM": false
+      }
+    },
+    {
+      "parentId": 3,
+      "type": "analogItem",
+      "defaultValue": "400",
+      "item": {
+        "maxValue": 1000,
+        "offset": 0,
+        "divisor": 1,
+        "unitName": "%menu.5.unit",
+        "step": 1,
+        "name": "%menu.5.name",
+        "variableName": "Current",
+        "id": 5,
+        "eepromAddress": -1,
+        "readOnly": false,
+        "localOnly": false,
+        "visible": true,
+        "staticDataInRAM": false
+      }
+    },
+    {
+      "parentId": 3,
+      "type": "enumItem",
+      "defaultValue": "8",
+      "item": {
+        "enumEntries": [
+          "%menu.6.enum.0",
+          "%menu.6.enum.1",
+          "%menu.6.enum.2",
+          "%menu.6.enum.3",
+          "%menu.6.enum.4",
+          "%menu.6.enum.5",
+          "%menu.6.enum.6",
+          "%menu.6.enum.7",
+          "%menu.6.enum.8"
+        ],
+        "name": "%menu.6.name",
+        "variableName": "Microstep",
+        "id": 6,
+        "eepromAddress": -1,
+        "readOnly": false,
+        "localOnly": false,
+        "visible": true,
+        "staticDataInRAM": false
+      }
+    },
+    {
+      "parentId": 3,
+      "type": "analogItem",
+      "defaultValue": "100",
+      "item": {
+        "maxValue": 100,
+        "offset": 0,
+        "divisor": 100,
+        "unitName": "%menu.7.unit",
+        "step": 1,
+        "name": "%menu.7.name",
+        "variableName": "HoldMultiplier",
+        "id": 7,
+        "eepromAddress": -1,
+        "readOnly": false,
+        "localOnly": false,
+        "visible": false,
+        "staticDataInRAM": false
+      }
+    },
+    {
+      "parentId": 3,
+      "type": "boolItem",
+      "defaultValue": "true",
+      "item": {
+        "naming": "TRUE_FALSE",
+        "name": "%menu.8.name",
+        "variableName": "Interpolate",
+        "id": 8,
+        "eepromAddress": -1,
+        "readOnly": false,
+        "localOnly": false,
+        "visible": false,
+        "staticDataInRAM": false
+      }
+    },
+    {
+      "parentId": 3,
+      "type": "boolItem",
+      "defaultValue": "false",
+      "item": {
+        "naming": "TRUE_FALSE",
+        "name": "%menu.9.name",
+        "variableName": "Reverse",
+        "id": 9,
+        "eepromAddress": -1,
+        "readOnly": false,
+        "localOnly": false,
+        "visible": true,
+        "staticDataInRAM": false
+      }
+    },
+    {
+      "parentId": 3,
+      "type": "analogItem",
+      "defaultValue": "4",
+      "item": {
+        "maxValue": 5,
+        "offset": 0,
+        "divisor": 1,
+        "unitName": "%menu.10.unit",
+        "step": 1,
+        "name": "%menu.10.name",
+        "variableName": "Toff",
+        "id": 10,
+        "eepromAddress": -1,
+        "readOnly": false,
+        "localOnly": false,
+        "visible": false,
+        "staticDataInRAM": false
+      }
+    },
+    {
+      "parentId": 3,
+      "type": "analogItem",
+      "defaultValue": "2",
+      "item": {
+        "maxValue": 5,
+        "offset": 0,
+        "divisor": 1,
+        "unitName": "%menu.11.unit",
+        "step": 1,
+        "name": "%menu.11.name",
+        "variableName": "Hend",
+        "id": 11,
+        "eepromAddress": -1,
+        "readOnly": false,
+        "localOnly": false,
+        "visible": false,
+        "staticDataInRAM": false
+      }
+    },
+    {
+      "parentId": 3,
+      "type": "analogItem",
+      "defaultValue": "1",
+      "item": {
+        "maxValue": 5,
+        "offset": 0,
+        "divisor": 1,
+        "unitName": "%menu.12.unit",
+        "step": 1,
+        "name": "%menu.12.name",
+        "variableName": "Hstrt",
+        "id": 12,
+        "eepromAddress": -1,
+        "readOnly": false,
+        "localOnly": false,
+        "visible": false,
+        "staticDataInRAM": false
+      }
+    },
+    {
+      "parentId": 3,
+      "type": "boolItem",
+      "defaultValue": "false",
+      "item": {
+        "naming": "TRUE_FALSE",
+        "name": "%menu.13.name",
+        "variableName": "Dedge",
+        "id": 13,
+        "eepromAddress": -1,
+        "readOnly": false,
+        "localOnly": false,
+        "visible": false,
+        "staticDataInRAM": false
+      }
+    },
+    {
+      "parentId": 2,
+      "type": "subMenu",
+      "item": {
+        "secured": true,
+        "name": "%menu.14.name",
+        "variableName": "Advanced",
+        "id": 14,
+        "eepromAddress": -1,
         "readOnly": false,
         "localOnly": false,
         "visible": true,
