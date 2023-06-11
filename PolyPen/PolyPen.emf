@@ -22,6 +22,46 @@
     },
     {
       "parentId": 0,
+      "type": "analogItem",
+      "defaultValue": "0",
+      "item": {
+        "maxValue": 255,
+        "offset": 0,
+        "divisor": 1,
+        "unitName": "%menu.16.unit",
+        "step": 1,
+        "name": "%menu.16.name",
+        "variableName": "Temperature",
+        "id": 16,
+        "eepromAddress": -1,
+        "readOnly": true,
+        "localOnly": false,
+        "visible": true,
+        "staticDataInRAM": false
+      }
+    },
+    {
+      "parentId": 0,
+      "type": "analogItem",
+      "defaultValue": "200",
+      "item": {
+        "maxValue": 240,
+        "offset": 0,
+        "divisor": 1,
+        "unitName": "%menu.15.unit",
+        "step": 1,
+        "name": "%menu.15.name",
+        "variableName": "Setpoint",
+        "id": 15,
+        "eepromAddress": -1,
+        "readOnly": false,
+        "localOnly": false,
+        "visible": true,
+        "staticDataInRAM": false
+      }
+    },
+    {
+      "parentId": 0,
       "type": "subMenu",
       "item": {
         "secured": false,
@@ -357,10 +397,11 @@
     "useCppMain": true,
     "saveLocation": "PROJECT_TO_SRC_WITH_GENERATED",
     "usingSizedEEPROMStorage": true,
-    "eepromDefinition": "eeprom:",
+    "eepromDefinition": "",
     "authenticatorDefinition": "",
     "projectIoExpanders": [
-      "deviceIO:"
+      "deviceIO:",
+      "pcf8574:io8574:56:24:false"
     ],
     "menuInMenuCollection": {
       "menuDefinitions": []

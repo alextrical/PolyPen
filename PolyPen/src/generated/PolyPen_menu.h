@@ -15,8 +15,8 @@
 #include <tcMenu.h>
 #include "tcMenuU8g2.h"
 #include <IoAbstraction.h>
+#include <IoAbstractionWire.h>
 #include <EepromItemStorage.h>
-#include <ArduinoEEPROMAbstraction.h>
 #include "PolyPen_langSelect.h"
 
 // variables we declare that you may need to access
@@ -26,7 +26,7 @@ extern U8g2Drawable gfxDrawable;
 extern GraphicsDeviceRenderer renderer;
 
 // Any externals needed by IO expanders, EEPROMs etc
-
+extern IoAbstractionRef ioexp_io8574;
 
 // Global Menu Item exports
 extern BackMenuItem menuBackAdvanced;
@@ -45,6 +45,8 @@ extern BackMenuItem menuBackMotor;
 extern SubMenuItem menuMotor;
 extern BackMenuItem menuBackSettings;
 extern SubMenuItem menuSettings;
+extern AnalogMenuItem menuSetpoint;
+extern AnalogMenuItem menuTemperature;
 extern BooleanMenuItem menuRun;
 
 // Provide a wrapper to get hold of the root menu item and export setupMenu
