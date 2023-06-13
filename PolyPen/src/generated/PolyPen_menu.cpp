@@ -23,19 +23,21 @@ GraphicsDeviceRenderer renderer(30, applicationInfo.name, &gfxDrawable);
 const SubMenuInfo minfoAdvanced = { TC_I18N_MENU_14_NAME, 14, 0xffff, 0, NO_CALLBACK };
 BackMenuItem menuBackAdvanced(&minfoAdvanced, nullptr, INFO_LOCATION_PGM);
 SubMenuItem menuAdvanced(&minfoAdvanced, &menuBackAdvanced, nullptr, INFO_LOCATION_PGM);
-const BooleanMenuInfo minfoDedge = { TC_I18N_MENU_13_NAME, 13, 0xffff, 1, NO_CALLBACK, NAMING_TRUE_FALSE };
-BooleanMenuItem menuDedge(&minfoDedge, false, nullptr, INFO_LOCATION_PGM);
-const AnalogMenuInfo minfoHstrt = { TC_I18N_MENU_12_NAME, 12, 0xffff, 5, NO_CALLBACK, 0, 1, TC_I18N_MENU_12_UNIT };
+const AnalogMenuInfo minfoStepsPerMm = { TC_I18N_MENU_18_NAME, 18, 0xffff, 65500, onStepperSet, 500, 100, TC_I18N_MENU_18_UNIT };
+AnalogMenuItem menuStepsPerMm(&minfoStepsPerMm, 19500, nullptr, INFO_LOCATION_PGM);
+const BooleanMenuInfo minfoDedge = { TC_I18N_MENU_13_NAME, 13, 0xffff, 1, onStepperSet, NAMING_TRUE_FALSE };
+BooleanMenuItem menuDedge(&minfoDedge, false, &menuStepsPerMm, INFO_LOCATION_PGM);
+const AnalogMenuInfo minfoHstrt = { TC_I18N_MENU_12_NAME, 12, 0xffff, 5, onStepperSet, 0, 1, TC_I18N_MENU_12_UNIT };
 AnalogMenuItem menuHstrt(&minfoHstrt, 1, &menuDedge, INFO_LOCATION_PGM);
-const AnalogMenuInfo minfoHend = { TC_I18N_MENU_11_NAME, 11, 0xffff, 5, NO_CALLBACK, 0, 1, TC_I18N_MENU_11_UNIT };
+const AnalogMenuInfo minfoHend = { TC_I18N_MENU_11_NAME, 11, 0xffff, 5, onStepperSet, 0, 1, TC_I18N_MENU_11_UNIT };
 AnalogMenuItem menuHend(&minfoHend, 2, &menuHstrt, INFO_LOCATION_PGM);
-const AnalogMenuInfo minfoToff = { TC_I18N_MENU_10_NAME, 10, 0xffff, 5, NO_CALLBACK, 0, 1, TC_I18N_MENU_10_UNIT };
+const AnalogMenuInfo minfoToff = { TC_I18N_MENU_10_NAME, 10, 0xffff, 5, onStepperSet, 0, 1, TC_I18N_MENU_10_UNIT };
 AnalogMenuItem menuToff(&minfoToff, 4, &menuHend, INFO_LOCATION_PGM);
-const BooleanMenuInfo minfoReverse = { TC_I18N_MENU_9_NAME, 9, 0xffff, 1, NO_CALLBACK, NAMING_TRUE_FALSE };
-BooleanMenuItem menuReverse(&minfoReverse, false, &menuToff, INFO_LOCATION_PGM);
-const BooleanMenuInfo minfoInterpolate = { TC_I18N_MENU_8_NAME, 8, 0xffff, 1, NO_CALLBACK, NAMING_TRUE_FALSE };
+const BooleanMenuInfo minfoReverse = { TC_I18N_MENU_9_NAME, 9, 0xffff, 1, onStepperSet, NAMING_TRUE_FALSE };
+BooleanMenuItem menuReverse(&minfoReverse, true, &menuToff, INFO_LOCATION_PGM);
+const BooleanMenuInfo minfoInterpolate = { TC_I18N_MENU_8_NAME, 8, 0xffff, 1, onStepperSet, NAMING_TRUE_FALSE };
 BooleanMenuItem menuInterpolate(&minfoInterpolate, true, &menuReverse, INFO_LOCATION_PGM);
-const AnalogMenuInfo minfoHoldMultiplier = { TC_I18N_MENU_7_NAME, 7, 0xffff, 100, NO_CALLBACK, 0, 100, TC_I18N_MENU_7_UNIT };
+const AnalogMenuInfo minfoHoldMultiplier = { TC_I18N_MENU_7_NAME, 7, 0xffff, 100, onStepperSet, 0, 100, TC_I18N_MENU_7_UNIT };
 AnalogMenuItem menuHoldMultiplier(&minfoHoldMultiplier, 100, &menuInterpolate, INFO_LOCATION_PGM);
 const char enumStrMicrostep_0[] = TC_I18N_MENU_6_ENUM_0;
 const char enumStrMicrostep_1[] = TC_I18N_MENU_6_ENUM_1;
@@ -47,11 +49,11 @@ const char enumStrMicrostep_6[] = TC_I18N_MENU_6_ENUM_6;
 const char enumStrMicrostep_7[] = TC_I18N_MENU_6_ENUM_7;
 const char enumStrMicrostep_8[] = TC_I18N_MENU_6_ENUM_8;
 const char* const enumStrMicrostep[]  = { enumStrMicrostep_0, enumStrMicrostep_1, enumStrMicrostep_2, enumStrMicrostep_3, enumStrMicrostep_4, enumStrMicrostep_5, enumStrMicrostep_6, enumStrMicrostep_7, enumStrMicrostep_8 };
-const EnumMenuInfo minfoMicrostep = { TC_I18N_MENU_6_NAME, 6, 0xffff, 8, NO_CALLBACK, enumStrMicrostep };
+const EnumMenuInfo minfoMicrostep = { TC_I18N_MENU_6_NAME, 6, 0xffff, 8, onStepperSet, enumStrMicrostep };
 EnumMenuItem menuMicrostep(&minfoMicrostep, 8, &menuHoldMultiplier, INFO_LOCATION_PGM);
-const AnalogMenuInfo minfoCurrent = { TC_I18N_MENU_5_NAME, 5, 0xffff, 1000, NO_CALLBACK, 0, 1, TC_I18N_MENU_5_UNIT };
+const AnalogMenuInfo minfoCurrent = { TC_I18N_MENU_5_NAME, 5, 0xffff, 1000, onStepperSet, 0, 1, TC_I18N_MENU_5_UNIT };
 AnalogMenuItem menuCurrent(&minfoCurrent, 400, &menuMicrostep, INFO_LOCATION_PGM);
-const BooleanMenuInfo minfoStealth = { TC_I18N_MENU_4_NAME, 4, 0xffff, 1, NO_CALLBACK, NAMING_TRUE_FALSE };
+const BooleanMenuInfo minfoStealth = { TC_I18N_MENU_4_NAME, 4, 0xffff, 1, onStepperSet, NAMING_TRUE_FALSE };
 BooleanMenuItem menuStealth(&minfoStealth, true, &menuCurrent, INFO_LOCATION_PGM);
 const SubMenuInfo minfoMotor = { TC_I18N_MENU_3_NAME, 3, 0xffff, 0, NO_CALLBACK };
 BackMenuItem menuBackMotor(&minfoMotor, &menuStealth, INFO_LOCATION_PGM);
@@ -59,12 +61,14 @@ SubMenuItem menuMotor(&minfoMotor, &menuBackMotor, &menuAdvanced, INFO_LOCATION_
 const SubMenuInfo minfoSettings = { TC_I18N_MENU_2_NAME, 2, 0xffff, 0, NO_CALLBACK };
 BackMenuItem menuBackSettings(&minfoSettings, &menuMotor, INFO_LOCATION_PGM);
 SubMenuItem menuSettings(&minfoSettings, &menuBackSettings, nullptr, INFO_LOCATION_PGM);
-const AnalogMenuInfo minfoSetpoint = { TC_I18N_MENU_15_NAME, 15, 0xffff, 240, NO_CALLBACK, 0, 1, TC_I18N_MENU_15_UNIT };
-AnalogMenuItem menuSetpoint(&minfoSetpoint, 200, &menuSettings, INFO_LOCATION_PGM);
-const AnalogMenuInfo minfoTemperature = { TC_I18N_MENU_16_NAME, 16, 0xffff, 255, NO_CALLBACK, 0, 1, TC_I18N_MENU_16_UNIT };
-AnalogMenuItem menuTemperature(&minfoTemperature, 0, &menuSetpoint, INFO_LOCATION_PGM);
+const AnalogMenuInfo minfoSpeed = { TC_I18N_MENU_17_NAME, 17, 0xffff, 290, onStepperSet, 10, 100, TC_I18N_MENU_17_UNIT };
+AnalogMenuItem menuSpeed(&minfoSpeed, 40, &menuSettings, INFO_LOCATION_PGM);
+const FloatMenuInfo minfoTemperature = { TC_I18N_MENU_16_NAME, 16, 0xffff, 2, NO_CALLBACK };
+FloatMenuItem menuTemperature(&minfoTemperature, 0.0, &menuSpeed, INFO_LOCATION_PGM);
+const AnalogMenuInfo minfoSetpoint = { TC_I18N_MENU_15_NAME, 15, 0xffff, 60, onSetpointChange, 180, 1, TC_I18N_MENU_15_UNIT };
+AnalogMenuItem menuSetpoint(&minfoSetpoint, 20, &menuTemperature, INFO_LOCATION_PGM);
 const BooleanMenuInfo minfoRun = { TC_I18N_MENU_1_NAME, 1, 0xffff, 1, onRun, NAMING_ON_OFF };
-BooleanMenuItem menuRun(&minfoRun, false, &menuTemperature, INFO_LOCATION_PGM);
+BooleanMenuItem menuRun(&minfoRun, false, &menuSetpoint, INFO_LOCATION_PGM);
 
 void setupMenu() {
     // First we set up eeprom and authentication (if needed).
@@ -72,12 +76,12 @@ void setupMenu() {
     // Now add any readonly, non-remote and visible flags.
     menuTemperature.setReadOnly(true);
     menuAdvanced.setSecured(true);
-    menuHstrt.setVisible(false);
-    menuHoldMultiplier.setVisible(false);
     menuHend.setVisible(false);
-    menuInterpolate.setVisible(false);
     menuToff.setVisible(false);
+    menuInterpolate.setVisible(false);
+    menuHstrt.setVisible(false);
     menuDedge.setVisible(false);
+    menuHoldMultiplier.setVisible(false);
 
     // Code generated by plugins.
     gfx.begin();

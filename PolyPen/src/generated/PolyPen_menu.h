@@ -14,8 +14,8 @@
 #include <Arduino.h>
 #include <tcMenu.h>
 #include "tcMenuU8g2.h"
-#include <IoAbstraction.h>
 #include <IoAbstractionWire.h>
+#include <IoAbstraction.h>
 #include <EepromItemStorage.h>
 #include "PolyPen_langSelect.h"
 
@@ -31,6 +31,7 @@ extern IoAbstractionRef ioexp_io8574;
 // Global Menu Item exports
 extern BackMenuItem menuBackAdvanced;
 extern SubMenuItem menuAdvanced;
+extern AnalogMenuItem menuStepsPerMm;
 extern BooleanMenuItem menuDedge;
 extern AnalogMenuItem menuHstrt;
 extern AnalogMenuItem menuHend;
@@ -45,8 +46,9 @@ extern BackMenuItem menuBackMotor;
 extern SubMenuItem menuMotor;
 extern BackMenuItem menuBackSettings;
 extern SubMenuItem menuSettings;
+extern AnalogMenuItem menuSpeed;
+extern FloatMenuItem menuTemperature;
 extern AnalogMenuItem menuSetpoint;
-extern AnalogMenuItem menuTemperature;
 extern BooleanMenuItem menuRun;
 
 // Provide a wrapper to get hold of the root menu item and export setupMenu
@@ -57,5 +59,7 @@ void setupMenu();
 #define CALLBACK_FUNCTION
 
 void CALLBACK_FUNCTION onRun(int id);
+void CALLBACK_FUNCTION onSetpointChange(int id);
+void CALLBACK_FUNCTION onStepperSet(int id);
 
 #endif // MENU_GENERATED_CODE_H
