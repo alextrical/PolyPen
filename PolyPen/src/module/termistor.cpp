@@ -3,6 +3,11 @@
 // Thermistor::Thermistor() {
 // }
 
+void Thermistor::begin(){
+    pinMode(THERMISTOR_PIN, INPUT);
+    pinMode(FAN_PIN, OUTPUT);
+    analogReadResolution(analogReadResolutionBits);  //https://www.arduino.cc/reference/en/language/functions/zero-due-mkr-family/analogreadresolution/
+}
 // ~~~~~ Thermistor Logic ~~~~~
 
 /* ~~~~~~~~~~~ Median sorting function ~~~~~~~~~~~ */
@@ -42,11 +47,21 @@ int Thermistor::analogReadMedian(int port) {
 float Thermistor::f_ReadTemp_ThABC(int TPin, long THERMISTOR, float R1, float A, float B, float C) {
 
   int Vo = analogReadMedian(TPin);
-  float Resistance = (65535 / (float)Vo) - 1;  // for pull-up configuration
+  float Resistance = (pow(2,analogReadResolutionBits) / (float)Vo) - 1;  // for pull-up configuration
   float R2 = R1 / Resistance;
 
   float logR2 = log(R2);  // Pre-Calcul for Log(R2)
   float T = (1.0 / (A + B * logR2 + C * logR2 * logR2 * logR2));
   T = T - 273.15;  // convert Kelvin to *C
+
+  //~~~Handle the fan logic~~~
+  if (T >= meltzoneFanTemp) {
+    analogWrite(FAN_PIN, fanSpeed * 2.55);
+    Serial.println("Fan ON");
+  } else {
+    analogWrite(FAN_PIN, 0);
+    Serial.println("Fan OFF");
+  }
+
   return T;
 }

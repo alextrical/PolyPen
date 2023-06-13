@@ -1,74 +1,87 @@
 #include "generated/PolyPen_menu.h"
-#include <TMCStepper.h>
 #include "module/thermistor.h"
+#include "module/motor.h"
 
-#include "TaskManagerIO.h"
 
+#include <IoAbstraction.h>
+#include <TaskManagerIO.h>
+
+#if defined(STM32_CORE_VERSION) && (STM32_CORE_VERSION  < 0x01090000)
 //STM32 HW - Need to detect Compiler HW and switch to matching
 #include <IWatchdog.h> //https://github.com/stm32duino/Arduino_Core_STM32/tree/main/libraries/IWatchdog
+#elif !defined(STM32_CORE_VERSION)
+//Add other Watchdog stuff here
+#endif
 
+#if defined(LED_BUILTIN) && !defined(pin)
+#define pin  LED_BUILTIN
+#else
+#define pin  D2
+#endif
 
-//~~~~Thermistor setup~~~
+bool button1Pressed = false;
+//The pin onto which we connected the rotary encoders switch
+const pinid_t BUTTON1_PIN = PB8;
+
+#define HEATER_PIN PB13 //PA2
+#define HEATER2_PIN PA2
+
+#define HEATER_MINTEMP        5
+#define HEATER_MAXTEMP      275
+#define HEATER_OVERSHOOT     15   // (°C) Forbid temperatures over MAXTEMP - OVERSHOOT
+#define HEATER_FAULT_VALIDATION_TIME 5    // number of 1/10 second loops before signalling a heater fault
+
+//~~~PID Heating~~~
+#include <QuickPID.h>
+
+//Define Variables we'll be connecting to
+float Setpoint = 100, Input, Output;
+
+float Kp = 4, Ki = 0.2, Kd = 1;
+
+//specify the links
+QuickPID myPID(&Input, &Output, &Setpoint);
+Motor motor = Motor();
 Thermistor thermistor = Thermistor();
-#define THERMISTOR_PIN PA3
 
-
-#define TA 0.7899581069E-3
-#define TB 2.153376487E-4
-#define TC 0.4538837458E-7  
-
-
-//~~~~Stepper setup~~~~
-HardwareSerial Serial2(PA15, PA14_ALT1);
-
-#define EN_PIN           PD2 // Enable
-#define DIR_PIN          PD1 // Direction
-#define STEP_PIN         PD0 // Step
-#define DRIVER_ADDRESS  0b00 // TMC2209 Driver address according to MS1 and MS2
-
-#define TMC_BAUD_RATE    115200
-bool stealth = true;
-uint16_t mA = 200;
-uint16_t microsteps = 64;
-float hold_multiplier = 1;
-float stepsPerMm = 200;
-float mmPerSec = 1;
-bool interpolate = true;
-bool reverse = true;
-// uint32_t HYBRID_THRESHOLD = 30;
-
-#define R_SENSE 0.11f // Match to your driver
-                      // BTT EBB42/36 use 0.11
-
-// Select your stepper driver type
-TMC2209Stepper driver(&Serial2, R_SENSE, DRIVER_ADDRESS);       // Hardware Serial
-//TMC2209Stepper driver(SW_RX, SW_TX, R_SENSE, DRIVER_ADDRESS);     // Software serial
-
-
-void stepperSet(){
-    driver.shaft(reverse); //Set motor direction in software
-    driver.en_spreadCycle(!stealth);
-    driver.intpol(interpolate);
-    driver.rms_current(mA, hold_multiplier); // Set motor RMS current
-    driver.microsteps(microsteps); // Set microsteps
-
-    driver.VACTUAL((microsteps*stepsPerMm*mmPerSec)); //Set the frequency of the oscilator
-}
+// ~~~Quality checks~~~
+#ifndef HEATER_MINTEMP
+#define HEATER_MINTEMP 5
+#endif
+#ifndef HEATER_MAXTEMP
+#define HEATER_MAXTEMP 275
+#endif
+#ifndef HEATER_OVERSHOOT
+#define HEATER_OVERSHOOT 15
+#endif
+#define HEATER_MAX_TARGET (HEATER_MAXTEMP - (HEATER_OVERSHOOT))
 
 void setup() {
-    // Initialize the IWDG with 4 seconds timeout.
-    // This would cause a CPU reset if the IWDG timer
-    // is not reloaded in approximately 4 seconds.
-    IWatchdog.begin(4000000); //STM32
-    taskManager.scheduleFixedRate(1000, [] { // schedule tasks to run at a fixed rate, every 1000 milliseconds.
-        IWatchdog.reload(); //STM32
-    });
+    Serial.begin(9600);
+    #if defined(STM32_CORE_VERSION) && (STM32_CORE_VERSION  < 0x01090000)
+        // Initialize the IWDG with 4 seconds timeout.
+        // This would cause a CPU reset if the IWDG timer
+        // is not reloaded in approximately 4 seconds.
+        IWatchdog.begin(4000000); //STM32
+        taskManager.scheduleFixedRate(1000, [] { // schedule tasks to run at a fixed rate, every 1000 milliseconds.
+            IWatchdog.reload(); //STM32
+        });
+    #endif
 
+    pinMode(HEATER_PIN, OUTPUT);
+    #ifdef HEATER_PIN2
+    pinMode(HEATER2_PIN, OUTPUT);
+    #endif
+
+    pinMode(pin, OUTPUT);
     taskManager.scheduleFixedRate(500, [] { // schedule tasks to run at a fixed rate, every 500 milliseconds.
         menuTemperature.setFloatValue(thermistor.f_ReadTemp_ThABC(THERMISTOR_PIN, 100000, 4700, TA, TB, TC));
+        digitalWrite(pin, !digitalRead(pin));
     });
 
     Wire.begin();
+    motor.begin();
+    thermistor.begin();
 
     //~~~~Menu Setup~~~~
     setupMenu();
@@ -79,65 +92,73 @@ void setup() {
     // switches.init(ioexp_io8574, SWITCHES_NO_POLLING, true);
     // menuMgr.initForEncoder(&renderer, &menuRun, 7, 6, 5);
 
-    //~~Thermistor Setup~~~
-    pinMode(THERMISTOR_PIN, INPUT);
-    analogReadResolution(16);  //https://www.arduino.cc/reference/en/language/functions/zero-due-mkr-family/analogreadresolution/
+    //~~~PID Heating~~~
+    //apply PID gains
+    myPID.SetTunings(Kp, Ki, Kd);
+
+    //turn the PID on
+    myPID.SetMode(myPID.Control::automatic);
 
 
-    //~~~~Stepper driver setup~~~~
-    pinMode(EN_PIN, OUTPUT);
-    pinMode(DIR_PIN, OUTPUT);
-    pinMode(STEP_PIN, OUTPUT);
-    digitalWrite(EN_PIN, HIGH);  //Enable driver in hardware, LOW is Enable
-    digitalWrite(DIR_PIN, LOW); //LOW or HIGH
-    digitalWrite(STEP_PIN, LOW);
+    taskManager.scheduleFixedRate(100, [] { // schedule tasks to run at a fixed rate, every 100 milliseconds.
+        // bool running = menuRun.getBoolean();
+        if (menuRun.getBoolean()) {
+            Input = thermistor.f_ReadTemp_ThABC(THERMISTOR_PIN, 100000, 4700, TA, TB, TC);
+            float gap = Setpoint - Input; //distance away from setpoint
+            // if (gap > -10) { //we're close to melt temperature, enable the extruder motor
+            if (Input > 120 && button1Pressed) { //we're close to melt temperature, enable the extruder motor
+                //run motor
+                digitalWrite(EN_PIN, LOW);
+            } else {
+                digitalWrite(EN_PIN, HIGH);
+            }
+            myPID.Compute();
+            if (gap < -10) {
+                Output = 0;
+            } else if (gap > 10) {
+                Output = 255;
+            }
 
-    // Enable one according to your setup
-    Serial2.begin(TMC_BAUD_RATE);          // HW UART drivers
-    // driver.beginSerial(TMC_BAUD_RATE);     // SW UART drivers
 
-    //Setup HW Serial for the TMC2209 on the EBB42/36 v1.1/v1.2 STM32G0B1CBT
-    USART2->CR1 &= ~USART_CR1_UE;   // UE = 0... disable USART
-    USART2->CR2 |= USART_CR2_SWAP;  // Swap TX/RX pins2
-    USART2->CR3 |= USART_CR3_HDSEL; // Set Half-duplex selection
-    USART2->CR1 |= USART_CR1_UE;    // UE = 1... Enable USART
+            // If the heater temp is abnormal, confirm state before signaling panel
+            uint8_t faultDuration = 0;
+            // while (!WITHIN(temperature, HEATER_MINTEMP, HEATER_MAXTEMP)) {
+            while (Input<HEATER_MINTEMP||Input>HEATER_MAXTEMP) {
+                faultDuration++;
+                Input = thermistor.f_ReadTemp_ThABC(THERMISTOR_PIN, 100000, 4700, TA, TB, TC);  // 100k thermistor; 4.7K pullup resistor; ABC parameters were calculated using the datasheet!
+                if (faultDuration >= HEATER_FAULT_VALIDATION_TIME) {
+                //SendtoTFTLN(AC_msg_nozzle_temp_abnormal);
+                // last_error(AC_error_abnormal_temp_bed);
+                // last_error currentState = AC_error_abnormal_temp_bed;
+                Serial.print("Bed temp abnormal! : ");
+                Serial.print(Input);
+                Serial.println("C");
+                Output = 0;
+                break;
+                }
+                delay(100); //wait 0.1 seconds
+            }
+        } else {
+            Output = 0; 
+        }
+        analogWrite(HEATER_PIN, Output);
+        #ifdef HEATER_PIN2
+        analogWrite(HEATER2_PIN, Output);
+        #endif
+    });
 
-    //~~~Setup Stepper registers~~~
-    driver.pdn_disable(true); // Use UART
-    driver.mstep_reg_select(true); // Select microsteps with UART
-    driver.I_scale_analog(false);
-    // driver.en_spreadCycle(!stealth);
-    // driver.GCONF(gconf.sr);
-    driver.begin();                 //  SPI: Init CS pins and possible SW SPI pins
-                                    // UART: Init SW UART (if selected) with default 115200 baudrate
-    driver.tbl(0b01); // blank_time = 24
-    driver.toff(4); //CHOPPER_DEFAULT_24V
-    // driver.intpol(interpolate);
-    driver.hend(2 + 3); //CHOPPER_DEFAULT_24V
-    driver.hstrt(1 - 1); //CHOPPER_DEFAULT_24V
-    driver.dedge(false); //Enable to step on edge/state change
-    // driver.CHOPCONF(chopconf.sr);
-    // driver.rms_current(mA, hold_multiplier); // Set motor RMS current
-    // driver.microsteps(microsteps); // Set microsteps
-    // driver.shaft(reverse); //Set motor direction in software
-    driver.iholddelay(10);
-    driver.TPOWERDOWN(128); // ~2s until driver lowers to hold current
-    driver.pwm_lim(12);
-    driver.pwm_reg(8);
-    driver.pwm_autograd(true);
-    driver.pwm_autoscale(true);     // Needed for stealthChop
-    driver.pwm_freq(0b01);
-    driver.pwm_grad(14);
-    driver.pwm_ofs(36);
+    // switches.addSwitch(BUTTON1_PIN, onButton1Clicked, NO_REPEAT);
+    // switches.onRelease(BUTTON1_PIN, onButton1Released);
 
-    stepperSet();
-
-    // driver.PWMCONF(driver.sr);
-    // driver.set_pwm_thrs(HYBRID_THRESHOLD);
-    driver.GSTAT(0b111); // Clear
-    //delay(200);
-
-    //driver.VACTUAL((microsteps*200));
+    switches.addSwitch(BUTTON1_PIN, [](pintype_t , bool held) {
+        Serial.print("Button 1 pressed");
+        button1Pressed = true;
+        Serial.println(held ? " Held" : " Pressed");
+    }, NO_REPEAT);
+    switches.onRelease(BUTTON1_PIN, [](pintype_t , bool) {
+        Serial.print("Button 1 released");
+        button1Pressed = false;
+    });
 }
 
 void loop() {
@@ -147,52 +168,54 @@ void loop() {
 
 void CALLBACK_FUNCTION onRun(int id) {
     // TODO - your menu change code
-    digitalWrite(EN_PIN, !digitalRead(EN_PIN));
+    onStepperSet(0);
 }
 
 
 void CALLBACK_FUNCTION onSetpointChange(int id) {
     // TODO - your menu change code
+    Setpoint = menuSetpoint.getAsFloatingPointValue();
 }
 
 
 void CALLBACK_FUNCTION onStepperSet(int id) {
-    stealth = menuStealth.getBoolean();
-    mA = menuCurrent.getCurrentValue();
+    motor.stealth = menuStealth.getBoolean();
+    motor.mA = menuCurrent.getCurrentValue();
     int stepChoice = menuMicrostep.getCurrentValue();
     switch (stepChoice) {
         case 0:
-            microsteps = 1;
+            motor.microsteps = 1;
             break;
         case 1:
-            microsteps = 2;
+            motor.microsteps = 2;
             break;
         case 2:
-            microsteps = 4;
+            motor.microsteps = 4;
             break;
         case 3:
-            microsteps = 8;
+            motor.microsteps = 8;
             break;
         case 4:
-            microsteps = 16;
+            motor.microsteps = 16;
             break;
         case 5:
-            microsteps = 32;
+            motor.microsteps = 32;
             break;
         case 6:
-            microsteps = 64;
+            motor.microsteps = 64;
             break;
         case 7:
-            microsteps = 128;
+            motor.microsteps = 128;
             break;
         case 8:
         default:
-            microsteps = 256;
+            motor.microsteps = 256;
             break;
     }
-    interpolate = menuInterpolate.getBoolean();
-    reverse = menuReverse.getBoolean();
-    stepsPerMm = 200;
-    mmPerSec = menuSpeed.getAsFloatingPointValue();
-    stepperSet();
+    motor.interpolate = menuInterpolate.getBoolean();
+    motor.reverse = menuReverse.getBoolean();
+    motor.stepsPerMm = 200;
+    motor.mmPerSec = menuSpeed.getAsFloatingPointValue();
+    motor.stepperSet();
+    thermistor.meltzoneFanTemp = 40;
 }

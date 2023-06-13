@@ -333,10 +333,130 @@
       "parentId": 2,
       "type": "subMenu",
       "item": {
-        "secured": true,
+        "secured": false,
         "name": "%menu.14.name",
         "variableName": "Advanced",
         "id": 14,
+        "eepromAddress": -1,
+        "readOnly": false,
+        "localOnly": false,
+        "visible": true,
+        "staticDataInRAM": false
+      }
+    },
+    {
+      "parentId": 14,
+      "type": "analogItem",
+      "defaultValue": "0",
+      "item": {
+        "maxValue": 255,
+        "offset": 0,
+        "divisor": 1,
+        "unitName": "%menu.19.unit",
+        "step": 1,
+        "name": "%menu.19.name",
+        "variableName": "Kp",
+        "id": 19,
+        "eepromAddress": -1,
+        "readOnly": false,
+        "localOnly": false,
+        "visible": true,
+        "staticDataInRAM": false
+      }
+    },
+    {
+      "parentId": 14,
+      "type": "analogItem",
+      "defaultValue": "0",
+      "item": {
+        "maxValue": 255,
+        "offset": 0,
+        "divisor": 1,
+        "unitName": "%menu.20.unit",
+        "step": 1,
+        "name": "%menu.20.name",
+        "variableName": "Ki",
+        "id": 20,
+        "eepromAddress": -1,
+        "readOnly": false,
+        "localOnly": false,
+        "visible": true,
+        "staticDataInRAM": false
+      }
+    },
+    {
+      "parentId": 14,
+      "type": "analogItem",
+      "defaultValue": "0",
+      "item": {
+        "maxValue": 255,
+        "offset": 0,
+        "divisor": 1,
+        "unitName": "%menu.21.unit",
+        "step": 1,
+        "name": "%menu.21.name",
+        "variableName": "Kd",
+        "id": 21,
+        "eepromAddress": -1,
+        "readOnly": false,
+        "localOnly": false,
+        "visible": true,
+        "staticDataInRAM": false
+      }
+    },
+    {
+      "parentId": 14,
+      "type": "analogItem",
+      "defaultValue": "0",
+      "item": {
+        "maxValue": 255,
+        "offset": 0,
+        "divisor": 1,
+        "unitName": "%menu.22.unit",
+        "step": 1,
+        "name": "%menu.22.name",
+        "variableName": "AggKp",
+        "id": 22,
+        "eepromAddress": -1,
+        "readOnly": false,
+        "localOnly": false,
+        "visible": true,
+        "staticDataInRAM": false
+      }
+    },
+    {
+      "parentId": 14,
+      "type": "analogItem",
+      "defaultValue": "0",
+      "item": {
+        "maxValue": 255,
+        "offset": 0,
+        "divisor": 1,
+        "unitName": "%menu.23.unit",
+        "step": 1,
+        "name": "%menu.23.name",
+        "variableName": "AggKi",
+        "id": 23,
+        "eepromAddress": -1,
+        "readOnly": false,
+        "localOnly": false,
+        "visible": true,
+        "staticDataInRAM": false
+      }
+    },
+    {
+      "parentId": 14,
+      "type": "analogItem",
+      "defaultValue": "0",
+      "item": {
+        "maxValue": 255,
+        "offset": 0,
+        "divisor": 1,
+        "unitName": "%menu.24.unit",
+        "step": 1,
+        "name": "%menu.24.name",
+        "variableName": "AggKd",
+        "id": 24,
         "eepromAddress": -1,
         "readOnly": false,
         "localOnly": false,
