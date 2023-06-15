@@ -29,6 +29,9 @@ extern GraphicsDeviceRenderer renderer;
 extern IoAbstractionRef ioexp_io8574;
 
 // Global Menu Item exports
+extern AnalogMenuItem menuKd;
+extern AnalogMenuItem menuKi;
+extern AnalogMenuItem menuKp;
 extern BackMenuItem menuBackAdvanced;
 extern SubMenuItem menuAdvanced;
 extern AnalogMenuItem menuStepsPerMm;

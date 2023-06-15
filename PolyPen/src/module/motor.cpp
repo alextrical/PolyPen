@@ -63,8 +63,6 @@ void Motor::begin(){
     // driver.set_pwm_thrs(HYBRID_THRESHOLD);
     driver.GSTAT(0b111); // Clear
     //delay(200);
-
-    //driver.VACTUAL((microsteps*200));
 }
 
 void Motor::stepperSet(){

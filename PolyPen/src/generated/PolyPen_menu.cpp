@@ -20,8 +20,14 @@ U8g2Drawable gfxDrawable(&gfx, &Wire);
 GraphicsDeviceRenderer renderer(30, applicationInfo.name, &gfxDrawable);
 
 // Global Menu Item declarations
+const AnalogMenuInfo minfoKd = { TC_I18N_MENU_21_NAME, 21, 0xffff, 255, NO_CALLBACK, 0, 1, TC_I18N_MENU_21_UNIT };
+AnalogMenuItem menuKd(&minfoKd, 0, nullptr, INFO_LOCATION_PGM);
+const AnalogMenuInfo minfoKi = { TC_I18N_MENU_20_NAME, 20, 0xffff, 255, NO_CALLBACK, 0, 1, TC_I18N_MENU_20_UNIT };
+AnalogMenuItem menuKi(&minfoKi, 0, &menuKd, INFO_LOCATION_PGM);
+const AnalogMenuInfo minfoKp = { TC_I18N_MENU_19_NAME, 19, 0xffff, 255, NO_CALLBACK, 0, 1, TC_I18N_MENU_19_UNIT };
+AnalogMenuItem menuKp(&minfoKp, 0, &menuKi, INFO_LOCATION_PGM);
 const SubMenuInfo minfoAdvanced = { TC_I18N_MENU_14_NAME, 14, 0xffff, 0, NO_CALLBACK };
-BackMenuItem menuBackAdvanced(&minfoAdvanced, nullptr, INFO_LOCATION_PGM);
+BackMenuItem menuBackAdvanced(&minfoAdvanced, &menuKp, INFO_LOCATION_PGM);
 SubMenuItem menuAdvanced(&minfoAdvanced, &menuBackAdvanced, nullptr, INFO_LOCATION_PGM);
 const AnalogMenuInfo minfoStepsPerMm = { TC_I18N_MENU_18_NAME, 18, 0xffff, 65500, onStepperSet, 500, 100, TC_I18N_MENU_18_UNIT };
 AnalogMenuItem menuStepsPerMm(&minfoStepsPerMm, 19500, nullptr, INFO_LOCATION_PGM);
@@ -75,7 +81,6 @@ void setupMenu() {
     setSizeBasedEEPROMStorageEnabled(true);
     // Now add any readonly, non-remote and visible flags.
     menuTemperature.setReadOnly(true);
-    menuAdvanced.setSecured(true);
     menuHend.setVisible(false);
     menuToff.setVisible(false);
     menuInterpolate.setVisible(false);
