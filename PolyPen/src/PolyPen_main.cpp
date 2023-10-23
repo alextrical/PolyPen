@@ -20,6 +20,7 @@
 #endif
 
 bool button1Pressed = false;
+bool button1LastState = false;
 //The pin onto which we connected the rotary encoders switch
 const pinid_t BUTTON1_PIN = PB8;
 
@@ -105,12 +106,22 @@ void setup() {
         if (menuRun.getBoolean()) {
             Input = thermistor.f_ReadTemp_ThABC(THERMISTOR_PIN, 100000, 4700, TA, TB, TC);
             float gap = Setpoint - Input; //distance away from setpoint
-            // if (gap > -10) { //we're close to melt temperature, enable the extruder motor
-            if (Input > 120 && button1Pressed) { //we're close to melt temperature, enable the extruder motor
-                //run motor
-                digitalWrite(EN_PIN, LOW);
-            } else {
-                digitalWrite(EN_PIN, HIGH);
+            if (gap > -5) { //we're close to melt temperature, enable the extruder motor
+            //if (Input > 110 ) { //we're close to melt temperature, enable the extruder motor
+                if (button1Pressed != button1LastState) {
+                    if (button1Pressed) {
+                        //run motor
+                        digitalWrite(DIR_PIN, LOW); //LOW for Forward direction
+                        digitalWrite(EN_PIN, LOW);  //Enable driver in hardware, LOW is Enable
+                    } else {
+                        digitalWrite(DIR_PIN, HIGH); //HIGH for reverse
+                        delay(menuRetractionTime.getCurrentValue());
+                        digitalWrite(EN_PIN, HIGH);  //Enable driver in hardware, LOW is Enable
+                    }
+                    button1LastState = button1Pressed;
+                }
+            } else { //too cold to extrude, shut off the motor
+                digitalWrite(EN_PIN, HIGH);  //Enable driver in hardware, LOW is Enable
             }
             myPID.Compute();
             if (gap < -10) {
@@ -119,6 +130,10 @@ void setup() {
                 Output = 255;
             }
 
+
+/////////////////////////
+    // digitalWrite(EN_PIN, HIGH);  //Enable driver in hardware, LOW is Enable
+    // digitalWrite(DIR_PIN, LOW); //LOW or HIGH
 
             // If the heater temp is abnormal, confirm state before signaling panel
             uint8_t faultDuration = 0;

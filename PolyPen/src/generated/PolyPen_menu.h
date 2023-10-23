@@ -34,6 +34,7 @@ extern AnalogMenuItem menuKi;
 extern AnalogMenuItem menuKp;
 extern BackMenuItem menuBackAdvanced;
 extern SubMenuItem menuAdvanced;
+extern AnalogMenuItem menuRetractionTime;
 extern AnalogMenuItem menuStepsPerMm;
 extern BooleanMenuItem menuDedge;
 extern AnalogMenuItem menuHstrt;

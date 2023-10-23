@@ -2,7 +2,7 @@
 // Never include directly, always include the langSelect header
 
 #define TC_I18N_MENU_16_UNIT "C"
-#define TC_I18N_MENU_22_NAME "AggKp"
+#define TC_I18N_MENU_22_NAME "Retraction Time"
 #define TC_I18N_MENU_9_NAME "Reverse"
 #define TC_I18N_MENU_10_UNIT ""
 #define TC_I18N_MENU_19_UNIT "Unit"
@@ -12,7 +12,7 @@
 #define TC_I18N_MENU_6_ENUM_8 "256"
 #define TC_I18N_MENU_6_ENUM_3 "8"
 #define TC_I18N_MENU_6_ENUM_2 "4"
-#define TC_I18N_MENU_22_UNIT "Unit"
+#define TC_I18N_MENU_22_UNIT "ms"
 #define TC_I18N_MENU_6_ENUM_5 "32"
 #define TC_I18N_MENU_6_ENUM_4 "16"
 #define TC_I18N_MENU_11_UNIT ""
